@@ -1,5 +1,16 @@
 # 版本记录
 
+## v0.2.1 — 2026-11-18
+
+**修复：显示睡眠唤醒后黑屏（背光不恢复）**
+
+- 根因：补丁 02 的 softsleep 唤醒路径用 `pp & 1` 判断面板电源，唤醒早期该位尚未置位 → 不写背光使能位，且标志被无条件清零 → 背光永不恢复
+- 修复：`on ? (pp|4U) : (pp&~4U)` 无条件置位，并在面板电源写入时补置 bit2（`Patches/ours/`）
+- EFI 的 boot-args 增加 `-wex-tgl-edp-softsleep`（必须保留）
+- 实测记录：`TGLSoftSleep1` `pp=0x67 → 0x63`（关背光）、`TGLSoftSleep2` `0x63 → 0x67`（**恢复背光**）
+
+> 注意：不加 softsleep 会走完整链路重训，本机重训后 WindowServer 报 `Display not ready`，120 秒看门狗 panic。
+
 ## v0.2.0 — 2026-11-17
 
 **驱动升级：WhateverXe 0.8.2 → 0.8.3**

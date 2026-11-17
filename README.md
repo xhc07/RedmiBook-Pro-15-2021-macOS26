@@ -226,7 +226,8 @@ LICENSES/            第三方许可证说明
 
 | 版本 | 驱动 | 说明 |
 |---|---|---|
-| **v0.2.0**（当前） | WhateverXe **0.8.3** + Compat 0.8.1 | 跟随上游 0.8.3，补丁已重新移植 |
+| **v0.2.1**（当前） | WhateverXe **0.8.3** + Compat 0.8.1 | 修复显示睡眠唤醒后黑屏（背光不恢复），EFI 启用 softsleep |
+| v0.2.0 | WhateverXe 0.8.3 + Compat 0.8.1 | 跟随上游 0.8.3（显示睡眠有问题，请勿单独使用） |
 | v0.1.0 | WhateverXe 0.8.2 + Compat 0.8.1 | 首个可用版本 |
 
 详细变更见 [CHANGELOG.md](CHANGELOG.md)。升级驱动请用 `Tools/port-to-new-version.sh`。
