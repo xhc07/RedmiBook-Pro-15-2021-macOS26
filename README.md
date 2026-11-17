@@ -152,6 +152,7 @@ LICENSES/            第三方许可证说明
 | [docs/07-参考资料与许可证.md](docs/07-参考资料与许可证.md) | 上游项目与版本 |
 | [docs/08-已知问题.md](docs/08-已知问题.md) | 已知问题与处理 |
 | [docs/09-EC热键抓取指南.md](docs/09-EC热键抓取指南.md) | 在 Windows 下抓取 EC 热键寄存器（Fn+F6/F7/F8）的方法 |
+| [docs/10-Fn热键实现计划.md](docs/10-Fn热键实现计划.md) | **Fn+F6/F7/F8 的完整实现计划与项目状态存档** |
 | [LICENSES/第三方许可证说明.md](LICENSES/第三方许可证说明.md) | 许可证分层 |
 | [README §10](README.md#10-声明) | AI 生成声明、商标声明、非官方声明、使用范围、工具声明 |
 
