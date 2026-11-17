@@ -230,3 +230,24 @@ LICENSES/            第三方许可证说明
 | v0.1.0 | WhateverXe 0.8.2 + Compat 0.8.1 | 首个可用版本 |
 
 详细变更见 [CHANGELOG.md](CHANGELOG.md)。升级驱动请用 `Tools/port-to-new-version.sh`。
+
+### 11.1 如何回退到旧版本
+
+每个 Release 的 **Source code (zip)** 就是该版本的**完整仓库快照**（含 EFI、驱动、工具、文档，不含任何新版本代码），
+下载解压即可直接使用：
+
+| 想回到 | 下载 |
+|---|---|
+| WhateverXe 0.8.2 | [v0.1.0](https://github.com/xhc07/RedmiBook-Pro-15-2021-macOS26/releases/tag/v0.1.0) 的 Source code (zip) |
+| WhateverXe 0.8.3 | [v0.2.0](https://github.com/xhc07/RedmiBook-Pro-15-2021-macOS26/releases/tag/v0.2.0) 的 Source code (zip) |
+
+或者用 git：
+
+```bash
+git clone https://github.com/xhc07/RedmiBook-Pro-15-2021-macOS26.git
+cd RedmiBook-Pro-15-2021-macOS26
+git checkout v0.1.0     # 回到 0.8.2 版本
+```
+
+> 注意：换回旧版 kext 后，`AppleIntelTGLCompat` 也要跟着换（0.8.2 ↔ Compat 0.8.1 是兼容的，0.8.3 也用 0.8.1），
+> 并用 `Tools/install-compat.sh 0.8.1` 重建 AuxKC。
