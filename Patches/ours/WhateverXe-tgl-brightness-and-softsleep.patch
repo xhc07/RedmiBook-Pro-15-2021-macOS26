@@ -1,0 +1,63 @@
+diff --git a/WhateverXe/kern_xe.cpp b/WhateverXe/kern_xe.cpp
+index 66f6cf8..3bbc742 100755
+--- a/WhateverXe/kern_xe.cpp
++++ b/WhateverXe/kern_xe.cpp
+@@ -14077,7 +14077,11 @@ void XE::tglSoftSleepBacklight(void *controller,bool on) {
+  if(!access || !s->orgTGLRegisterRead)return;
+  const auto pp=FunctionCast(wrapTGLRegisterRead,s->orgTGLRegisterRead)(access,0xC7204);
+  if(pp==~0U)return;
+- const uint32_t want=on ? ((pp&1) ? (pp|4U) : pp) : (pp&~4U);
++ // Local fix (RedmiBook Pro 15 2021): wake runs before the panel power is up, so
++ // requiring PP_CONTROL bit0 here meant the backlight was never re-enabled and the
++ // flag was cleared anyway. Set the backlight enable unconditionally on wake; the
++ // panel-power write below re-arms it as a fallback if the write was too early.
++ const uint32_t want=on ? (pp|4U) : (pp&~4U);
+  if(want!=pp)wrapTGLRegisterWrite(access,0xC7204,want);
+  tglSoftSleepRecord(on?2:1,pp,want);
+  SYSLOG("igfx","TGL eDP soft-sleep backlight %s PP_CONTROL %x -> %x",on?"on":"off",pp,want);
+@@ -19676,6 +19680,14 @@ void XE::wrapTGLRegisterWrite(void *access, unsigned long reg, uint32_t value) {
+ 	// The donor enabling transcoder A itself means a complete mode set with its
+ 	// own link training: the firmware link is gone and the pipe depth is the
+ 	// donor's own again, so stop forcing the firmware bpc into its writes.
++	// Local fix (RedmiBook Pro 15 2021): if a soft sleep turned the backlight off and
++	// the wake-time attempt ran before the panel was powered, re-arm the backlight
++	// enable on the donor's own panel-power write instead of losing it forever.
++	if (reg == 0xC7204 && tglSoftSleepBacklightOff && (value & 1U)) {
++		value |= 4U;
++		tglSoftSleepBacklightOff = false;
++		tglSoftSleepRecord(2, 0, value);
++	}
+ 	if (reg == 0x60400 && (value & 0x80000000U) && tglEDPKeptMiscBpc != 0xFF) {
+ 		tglEDPKeptMiscBpc = 0xFF;
+ 		IORegistryEntry::getRegistryRoot()->setProperty("TGLEDPRetrained", value, 32);
+@@ -19692,7 +19704,29 @@ void XE::wrapTGLRegisterWrite(void *access, unsigned long reg, uint32_t value) {
+ 			const uint32_t donor = *reinterpret_cast<uint32_t *>(ctl + 0xE60);
+ 			const uint32_t hw = FunctionCast(wrapTGLRegisterRead, callbackXE->orgTGLRegisterRead)(access, 0xC8254);
+ 			if (donor && hw && hw != ~0U && donor != hw && value <= donor) {
+-				const uint32_t scaled = static_cast<uint32_t>(static_cast<uint64_t>(value) * hw / donor);
++				// Local fix (RedmiBook Pro 15 2021): Apple's lowest brightness step asks
++				// for zero duty, which extinguishes this panel completely and leaves no
++				// second display to recover on. Reserve one visible floor (the native
++				// first step, period/16) and remap the whole donor range onto
++				// [floor, hw]. Clamping instead of remapping would flatten the low end
++				// of the brightness curve into a dead zone, because Apple's curve asks
++				// for very small duty values well past the bottom of the slider. Sleep
++				// and panel-off clear PP_CONTROL (0xC7204) rather than the duty
++				// register, so the floor cannot keep the backlight on.
++				// Local fix (RedmiBook Pro 15 2021): the donor maps Apple's brightness
++				// onto its own PWM period while the hardware keeps the firmware period
++				// in 0xC8254. A plain proportional rescale put the bottom of Apple's
++				// curve hard against zero duty, so the lowest steps collapsed. Shift the
++				// whole range onto [floor, hw] instead: steps keep their spacing, none is
++				// flattened into another, and zero duty is never written (this panel has
++				// no second display to recover on). Sleep and panel-off clear PP_CONTROL
++				// (0xC7204) rather than this register, so the floor cannot leave the
++				// backlight on.
++				const uint32_t floor = hw / 16;
++				uint32_t scaled = floor + static_cast<uint32_t>(
++					static_cast<uint64_t>(value) * (hw - floor) / donor);
++				if (scaled > hw) scaled = hw;
++				if (scaled < floor) scaled = floor;
+ 				uint32_t rec[] = {1, value, donor, hw, scaled};
+ 				IORegistryEntry::getRegistryRoot()->setProperty("TGLBacklightRescale", rec, sizeof(rec));
+ 				value = scaled;
