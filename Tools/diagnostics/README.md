@@ -71,7 +71,25 @@ sudo ./check-esp.sh disk2s1    # 或手动指定
 textutil -convert txt -stdout ~/Desktop/panic.rtf | head -5
 ```
 
-### 6. `brightctl` —— 亮度读写（源码 `brightctl.c`）
+### 6. `fnprobe.sh` —— Fn 键一键探测
+
+```bash
+sudo ./fnprobe.sh 60     # 抓 60 秒，同时记录 HID 事件与亮度变化
+```
+
+结束后自动汇总三段：按键类 HID 事件、亮度变化、**厂商页 0xFF00+**（判断按键是否到达系统）。
+输出文件：`/tmp/fnprobe_hid.log`、`/tmp/fnprobe_bright.log`。
+
+**实测结论（本机）**：
+
+| 键 | 结果 |
+|---|---|
+| Fn+F4/F5（亮度） | 亮度每档 ±128 |
+| Fn+F1/F2/F3（静音/音量） | `PAGE=0x0C` 的 Mute / Volume Down / Up |
+| Fn+F6/F7/F8（投屏/截图/任务视图） | **无任何 HID 事件、无厂商页** → EC 私有协议 |
+| Fn+F9/F10（触控板/键盘灯） | 无 HID，EC 硬件直接生效 |
+
+### 7. `brightctl` —— 亮度读写（源码 `brightctl.c`）
 
 ```bash
 ./brightctl            # 读当前亮度
@@ -81,12 +99,12 @@ textutil -convert txt -stdout ~/Desktop/panic.rtf | head -5
 走 `IODisplaySetFloatParameter` / `IODisplayGetFloatParameter`，用于**验证背光驱动是否响应**。
 （注意：它只改占空比，不改背光使能位 `PP_CONTROL bit2`，所以"背光使能为 0"时改了也不亮——这正是我们定位问题的关键实验之一。）
 
-### 7. `brightd` —— 亮度恢复守护进程（源码 `brightd.c`）
+### 8. `brightd` —— 亮度恢复守护进程（源码 `brightd.c`）
 
 监听系统唤醒，唤醒后重新施加一次亮度值。
 **用途**：如果你的机器唤醒后背光丢失，可用它做兜底恢复。
 
-### 8. `hidsniff` / `hidsniff2` —— HID 事件嗅探（源码同名 `.c`）
+### 9. `hidsniff` / `hidsniff2` —— HID 事件嗅探（源码同名 `.c`）
 
 ```bash
 ./hidsniff      # 打印原始 HID 事件（usage page / usage / value）
