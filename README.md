@@ -222,3 +222,11 @@ LICENSES/            第三方许可证说明
 
 > 上述工具仅用于**制作、配置与诊断**，不随本仓库分发（macOS 自带工具除外）。
 
+## 11. 版本
+
+| 版本 | 驱动 | 说明 |
+|---|---|---|
+| **v0.2.0**（当前） | WhateverXe **0.8.3** + Compat 0.8.1 | 跟随上游 0.8.3，补丁已重新移植 |
+| v0.1.0 | WhateverXe 0.8.2 + Compat 0.8.1 | 首个可用版本 |
+
+详细变更见 [CHANGELOG.md](CHANGELOG.md)。升级驱动请用 `Tools/port-to-new-version.sh`。
