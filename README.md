@@ -105,6 +105,22 @@ tail -f /tmp/mifskeysd.log      # 按键时出现 "event N"
 > 亮度键不需要守护进程，因为 macOS 有内核级的显示亮度机制。
 > 详见 [Packages/MIFS/README.md](Packages/MIFS/README.md)。
 
+### 3.1.1 关于 Release 压缩包的解压
+
+Release 附件的 zip 里含**中文文件名**（`docs/` 下的文档）。不同工具表现不同：
+
+| 工具 | 结果 |
+|---|---|
+| macOS Finder 双击 / `ditto -x -k` | ✅ 正常 |
+| macOS 命令行 `unzip` | ⚠️ 部分版本会**跳过中文名文件**（docs 目录缺失） |
+| 7-Zip / WinRAR / Keka | ✅ 正常 |
+| Windows 资源管理器自带解压 | ⚠️ 可能乱码 |
+
+**推荐**：用 7-Zip、Keka 或直接 `git clone`（最稳）。
+
+`v0.3.0` 起的 zip 已带 UTF-8 文件名标志，主流工具均可正确解压；
+更早的 `v0.1.0/v0.2.0` 建议优先用 `git clone` + `git checkout <tag>`。
+
 ### 3.2 一键安装（交给 AI 或直接跑）
 
 ```bash
@@ -191,6 +207,7 @@ LICENSES/            第三方许可证说明
 | [docs/08-已知问题.md](docs/08-已知问题.md) | 已知问题与处理 |
 | [docs/09-EC热键抓取指南.md](docs/09-EC热键抓取指南.md) | 在 Windows 下抓取 EC 热键寄存器（Fn+F6/F7/F8）的方法 |
 | [Packages/MIFS/README.md](Packages/MIFS/README.md) | **Fn+F6/F7/F8 热键组件**：原理、安装、避坑 |
+| [docs/11-Fn键总览.md](docs/11-Fn键总览.md) | **Fn 键总览**：亮度键与热键的两种拦截模式对比 |
 | [docs/10-Fn热键实现计划.md](docs/10-Fn热键实现计划.md) | Fn 热键的完整排查过程与实现记录 |
 | [LICENSES/第三方许可证说明.md](LICENSES/第三方许可证说明.md) | 许可证分层 |
 | [README §10](README.md#10-声明) | AI 生成声明、商标声明、非官方声明、使用范围、工具声明 |
