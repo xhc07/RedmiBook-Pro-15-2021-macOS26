@@ -47,12 +47,17 @@
    - `ACPI > Patch` ×3：`_Q2B→XQ2B`、`_Q66→XQ66`、`_Q08→XQ08`
      （**必须限定** `TableSignature=SSDT`、`OemTableId=XMCC1806`、`Count=1`）
 2. **Kext**：`MIFSKeys.kext` 放进 `EFI/OC/Kexts/`，`Kernel > Add` 加条目
-3. **守护进程**：
+3. **守护进程**（一键）：
+   ```bash
+   sudo bash Packages/MIFS/install.sh
+   ```
+   或手动：
    ```bash
    sudo cp daemon/mifskeysd /usr/local/bin/
    sudo cp daemon/org.mifs.mifskeysd.plist /Library/LaunchAgents/
    sudo chown root:wheel /Library/LaunchAgents/org.mifs.mifskeysd.plist
    ```
+   卸载：`sudo bash Packages/MIFS/uninstall.sh`
 4. 重启
 
 ## 验证
