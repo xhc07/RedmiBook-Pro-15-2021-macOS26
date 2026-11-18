@@ -35,7 +35,10 @@
 | 显示器睡眠 / 唤醒 | ✅ | `-wex-tgl-edp-softsleep`，唤醒只做 partial modeset |
 | **系统睡眠（S3）** | ❌ | 唤醒后显示无法恢复 → 看门狗 panic，详见 [docs/05](docs/05-睡眠调查.md) |
 | 电池电量 / 充电状态 | ✅ | `SSDT-ADPX`（发布 `ACPI0003`）+ `SMCBatteryManager` |
-| Fn 亮度键（F2/F3） | ⚠️ | `SSDT-BRTN` + `BrightnessKeys`：EC 层上报，部分场景无效 |
+| **Fn+F4 / Fn+F5（亮度）** | ✅ | `SSDT-BRTN` + `BrightnessKeys`，实测每档 ±128 |
+| **Fn+F6（投屏）** | ✅ | `Packages/MIFS`：SSDT-KEYS + MIFSKeys.kext + 守护进程 |
+| **Fn+F7（截图）** | ✅ | 同上（区域截图到剪贴板） |
+| **Fn+F8（任务视图）** | ✅ | 同上（Mission Control） |
 | 键盘 / 触摸板 / 手势 | ✅ | VoodooPS2 2.3.8 + VoodooI2C 2.9.1（已打补丁） |
 | 音频输出 / 输入口 | ✅ | `SimpleHDA` 1.0.0 + `AppleALC` 1.9.8（`alcid=38`，需 `keepsyms=1`） |
 | **内置麦克风（DMIC）** | ❌ | macOS 无 SOF/DSP 栈，见 [docs/08](docs/08-已知问题.md) |
@@ -70,6 +73,38 @@ sudo ./Tools/install-compat.sh 0.8.1
 两者 **kext、ACPI、其余 config 完全一致**，只有启动参数不同；日志内容对报 bug 很有用。
 详见 [EFI/README.md](EFI/README.md)、[EFI-debug/README.md](EFI-debug/README.md)。
 
+### 3.3 Fn 热键的系统侧安装（v0.3.0 起）
+
+`Fn+F6/F7/F8` 需要**两个系统文件**（EFI 部分已含在 `EFI/` 里，无需额外操作）：
+
+```bash
+# 1) 安装守护进程
+sudo cp Packages/MIFS/daemon/mifskeysd /usr/local/bin/
+sudo chmod 755 /usr/local/bin/mifskeysd
+
+# 2) 安装开机自启
+sudo cp Packages/MIFS/daemon/org.mifs.mifskeysd.plist /Library/LaunchAgents/
+sudo chown root:wheel /Library/LaunchAgents/org.mifs.mifskeysd.plist
+sudo chmod 644 /Library/LaunchAgents/org.mifs.mifskeysd.plist
+
+# 3) 启动（或重启后自动启动）
+launchctl bootstrap gui/$(id -u) /Library/LaunchAgents/org.mifs.mifskeysd.plist
+```
+
+**首次按 F7（截图）时**，系统会弹窗要求给 `mifskeysd` **屏幕录制**权限，允许即可。
+
+验证：
+
+```bash
+ioreg -l -c MIFSKeys | grep -E 'EventCount|LastEvent|MIFSKeysReady'
+pgrep -fl mifskeysd
+tail -f /tmp/mifskeysd.log      # 按键时出现 "event N"
+```
+
+> 为什么需要守护进程：截图/任务视图/显示器设置都是**用户态功能**，内核里没有对应 API。
+> 亮度键不需要守护进程，因为 macOS 有内核级的显示亮度机制。
+> 详见 [Packages/MIFS/README.md](Packages/MIFS/README.md)。
+
 ### 3.2 一键安装（交给 AI 或直接跑）
 
 ```bash
@@ -93,6 +128,7 @@ Patches/third-party/ 同机型社区的 4 个 eDP 补丁（含出处与 SHA256�
 Drivers/             WhateverXe Graphics 0.4.1 安装包 + Compat 0.8.0 / 0.8.1
 Tools/               安装、自检、一键安装脚本                      → Tools/README.md
 Tools/diagnostics/   排查工具（采样器 / panic / ESP / 背光 / HID）  → Tools/diagnostics/README.md
+Packages/MIFS/       **Fn+F6/F7/F8 热键**组件（SSDT + kext + 守护进程 + 安装） → Packages/MIFS/README.md
 docs/                安装、功能、实现、失败尝试、睡眠调查、亮度调优、参考资料、已知问题
 AI-INSTALL.md        给 AI 的一键安装说明（可直接粘贴给助手）      → AI-INSTALL.md
 LICENSES/            第三方许可证说明
@@ -107,12 +143,14 @@ LICENSES/            第三方许可证说明
 | 亮度下限 6.25% | 原驱动把亮度滑到底会直接黑屏 | [docs/06](docs/06-亮度调优.md) |
 | softsleep 背光修复 | 唤醒时 `PP_CONTROL bit0` 未就绪导致背光永不恢复 | [docs/03](docs/03-实现说明.md) |
 | 系统睡眠调查 | 结论：本机不可用（驱动层），已彻底记录 | [docs/05](docs/05-睡眠调查.md) |
+| **Fn+F6/F7/F8 热键**（`Packages/MIFS`） | EC 查询在厂商 SSDT 里，需自建 SSDT + kext + 守护进程桥接 | [Packages/MIFS](Packages/MIFS/README.md) |
 
 ## 6. 已知问题
 
 - **系统睡眠不可用**：睡着能醒，但唤醒后显示恢复失败 → WindowServer 看门狗 panic。已用 `disablesleep 1` 阻止误触发。
 - **内置麦克风不可用**：无 SST/ADSP/DMIC 的 macOS 驱动栈；请用 USB 声卡或蓝牙耳机。
-- **Fn 亮度键不稳定**：EC 上报时序依赖，部分场景无响应。
+- **Fn 亮度键**：偶发无响应（EC 上报时序），可再按一次。
+- **Fn+F6/F7/F8**：需要安装守护进程（见 §3.3）；首次用 F7 需授予屏幕录制权限。
 - **合盖不睡眠**：见上，合盖后会保持运行（注意散热）。
 
 更多见 [docs/08-已知问题.md](docs/08-已知问题.md)。
@@ -152,7 +190,8 @@ LICENSES/            第三方许可证说明
 | [docs/07-参考资料与许可证.md](docs/07-参考资料与许可证.md) | 上游项目与版本 |
 | [docs/08-已知问题.md](docs/08-已知问题.md) | 已知问题与处理 |
 | [docs/09-EC热键抓取指南.md](docs/09-EC热键抓取指南.md) | 在 Windows 下抓取 EC 热键寄存器（Fn+F6/F7/F8）的方法 |
-| [docs/10-Fn热键实现计划.md](docs/10-Fn热键实现计划.md) | **Fn+F6/F7/F8 的完整实现计划与项目状态存档** |
+| [Packages/MIFS/README.md](Packages/MIFS/README.md) | **Fn+F6/F7/F8 热键组件**：原理、安装、避坑 |
+| [docs/10-Fn热键实现计划.md](docs/10-Fn热键实现计划.md) | Fn 热键的完整排查过程与实现记录 |
 | [LICENSES/第三方许可证说明.md](LICENSES/第三方许可证说明.md) | 许可证分层 |
 | [README §10](README.md#10-声明) | AI 生成声明、商标声明、非官方声明、使用范围、工具声明 |
 
