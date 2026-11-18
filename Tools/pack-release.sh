@@ -10,7 +10,7 @@ NAME="RedmiBook-Pro-15-2021-macOS26"
 
 # 找 7zz
 ZZ=""
-for c in 7zz /tmp/7z/7zz /usr/local/bin/7zz /opt/homebrew/bin/7zz; do
+for c in "$HERE/Tools/bin/7zz" 7zz /tmp/7z/7zz /usr/local/bin/7zz /opt/homebrew/bin/7zz; do
   [ -x "$c" ] && { ZZ="$c"; break; }
   command -v "$c" >/dev/null 2>&1 && { ZZ="$(command -v "$c")"; break; }
 done
