@@ -105,6 +105,20 @@ tail -f /tmp/mifskeysd.log      # 按键时出现 "event N"
 > 亮度键不需要守护进程，因为 macOS 有内核级的显示亮度机制。
 > 详见 [Packages/MIFS/README.md](Packages/MIFS/README.md)。
 
+### 3.4 安装后必做：清理旧驱动残留
+
+如果你之前装过别的核显驱动（如 nmx/IrisXe），NVRAM 里可能残留亮度变量，会导致**开机亮度自动跳高**：
+
+```bash
+# 检查
+nvram nmintelfb-brightness
+# 删除（若存在）
+sudo nvram -d nmintelfb-brightness
+```
+
+> 这不是改 EFI、系统或驱动，只是**清掉旧驱动写在 NVRAM 里的脏数据**。
+> 详见 [docs/08 §6.5](docs/08-已知问题.md)。
+
 ### 3.1.1 关于 Release 压缩包的解压
 
 Release 附件的 zip 里含**中文文件名**（`docs/` 下的文档）。不同工具表现不同：
@@ -171,6 +185,7 @@ LICENSES/            第三方许可证说明
 - **内置麦克风不可用**：无 SST/ADSP/DMIC 的 macOS 驱动栈；请用 USB 声卡或蓝牙耳机。
 - **Fn 亮度键**：偶发无响应（EC 上报时序），可再按一次。
 - **Fn+F6/F7/F8**：需要安装守护进程（见 §3.3）；首次用 F7 需授予屏幕录制权限。
+- **开机亮度跳高**：旧驱动 NVRAM 残留导致，执行 `sudo nvram -d nmintelfb-brightness` 解决（见 §3.4）
 - **合盖不睡眠**：见上，合盖后会保持运行（注意散热）。
 
 更多见 [docs/08-已知问题.md](docs/08-已知问题.md)。

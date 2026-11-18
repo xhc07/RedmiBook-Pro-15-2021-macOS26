@@ -71,7 +71,7 @@ fi
 
 # DVMT 检查
 log ""
-log "[2/6] DVMT 检查（需要 128 MB）"
+log "[1.5/7] DVMT 检查（需要 128 MB）"
 DVMTOK=0
 if PLIST=$(nvram -x 72C5E28C-7783-43A1-8767-FAD73FCCAFA4:SaSetup 2>/dev/null); then
   TMP=$(mktemp); printf '%s' "$PLIST" > "$TMP.plist"
@@ -96,7 +96,7 @@ fi
 
 # ---------- 2. 安装 Graphics ----------
 log ""
-log "[3/6] 安装 WhateverXe Graphics（Apple 原厂 kext + Compat）"
+log "[2/7] 安装 WhateverXe Graphics（Apple 原厂 kext + Compat）"
 [ -f "$ROOT/Drivers/WhateverXe-Graphics-0.4.1.pkg" ] || die "缺少 Drivers/WhateverXe-Graphics-0.4.1.pkg"
 if ask "  执行 installer -pkg Drivers/WhateverXe-Graphics-0.4.1.pkg ?"; then
   installer -pkg "$ROOT/Drivers/WhateverXe-Graphics-0.4.1.pkg" -target / || die "Graphics 安装失败"
@@ -107,7 +107,7 @@ fi
 
 # ---------- 3. 配对 Compat ----------
 log ""
-log "[4/6] 配对 AppleIntelTGLCompat"
+log "[3/7] 配对 AppleIntelTGLCompat"
 case "$WXV" in
   0.8.2) WANT=0.8.1;;
   0.8.0) WANT=0.8.0;;
@@ -118,7 +118,7 @@ log "  EFI WhateverXe $WXV → Compat $WANT"
 
 # ---------- 4. 电源策略 ----------
 log ""
-log "[5/6] 电源策略"
+log "[4/7] 电源策略"
 if [ "$DO_PMSET" -eq 1 ]; then
   if ask "  禁止系统睡眠（本机 S3 唤醒会 panic，详见 docs/05）？"; then
     pmset -a disablesleep 1 sleep 0 hibernatemode 0 standby 0 powernap 0 tcpkeepalive 0
@@ -130,9 +130,23 @@ else
   log "  - 按参数跳过"
 fi
 
+# ---------- 4.5 清理旧驱动残留的 NVRAM 变量 ----------
+log ""
+log "[5/7] 清理旧驱动残留（避免开机亮度跳高）"
+if nvram nmintelfb-brightness >/dev/null 2>&1; then
+  log "  发现残留变量 nmintelfb-brightness（旧 nmx/IrisXe 驱动遗留）"
+  if ask "  删除它？（不会影响系统，仅清除亮度残留）"; then
+    nvram -d nmintelfb-brightness && log "  ✓ 已删除"
+  else
+    log "  - 跳过（可能导致开机亮度自动跳高）"
+  fi
+else
+  log "  ✓ 无残留"
+fi
+
 # ---------- 5. 自检 ----------
 log ""
-log "[6/6] 自检"
+log "[6/7] 自检"
 "$ROOT/Tools/verify.sh" || true
 
 log ""
