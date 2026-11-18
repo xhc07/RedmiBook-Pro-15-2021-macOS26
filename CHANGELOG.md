@@ -1,5 +1,26 @@
 # 版本记录
 
+## v0.3.1 — 2026-11-18
+
+**修复：开机后亮度自动跳高**
+
+- 现象：关机前调低亮度，开机后被自动调高（最多两次，目标约 0.88）
+- 根因：NVRAM 残留旧驱动（nmx/IrisXe）的变量 `nmintelfb-brightness = 88`
+- 修复：`sudo nvram -d nmintelfb-brightness`（安装脚本已自动化）
+- 验证：连续三次重启，开机亮度精确等于关机前值，零跳变
+
+**新增工具**
+
+- `Tools/diagnostics/brightlogd`：亮度变化记录器（200ms 采样，写 `/var/log/brightness.log`）
+- `Tools/ai-install.sh` 新增第 6 步：自动检测并清理残留 NVRAM 变量
+
+**文档**
+
+- `README` §3.4：安装后必做（清理旧驱动残留）
+- `docs/04 §I`：亮度跳高的完整排查过程 + NVRAM 原理问答
+- `docs/08 §6.5`：从「待查」改为「已解决」
+- `docs/11`：Fn 键总览（亮度键 vs 热键的两种拦截模式）
+
 ## v0.3.0 — 2026-11-18
 
 **新增：Fn+F6 / F7 / F8 热键支持（投屏 / 截图 / 任务视图）**

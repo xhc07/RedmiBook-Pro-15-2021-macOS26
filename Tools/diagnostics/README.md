@@ -115,6 +115,35 @@ sudo ./fnprobe.sh 60     # 抓 60 秒，同时记录 HID 事件与亮度变化
 我们用它确认了「Fn 亮度键不经过 PS2/HID，而是 EC 触发的 ACPI 查询（`_Q15`/`_Q16`）」——
 这直接决定了后来走 `SSDT-BRTN` 而不是改键码表。
 
+### 10. `brightlogd` —— 亮度变化记录器（源码 `brightlogd.c`）
+
+**用途**：排查「开机亮度自动跳高/跳变」类问题，记录亮度随时间的变化。
+
+- 每 **200ms** 采样一次 `IODisplayGetFloatParameter`，值变化时写日志
+- 日志：`/var/log/brightness.log`（非易失，跨重启保留）
+- 格式：`HH:MM:SS.mmm  uptime=xxx.xs  brightness=0.xxxx`
+
+**安装为开机自启**：
+
+```bash
+sudo cp brightlogd /usr/local/bin/
+sudo chmod 755 /usr/local/bin/brightlogd
+sudo cp local.brightlogd.plist /Library/LaunchDaemons/
+sudo chown root:wheel /Library/LaunchDaemons/local.brightlogd.plist
+sudo launchctl bootstrap system /Library/LaunchDaemons/local.brightlogd.plist
+```
+
+**卸载**：
+
+```bash
+sudo launchctl bootout system/local.brightlogd
+sudo rm -f /usr/local/bin/brightlogd /Library/LaunchDaemons/local.brightlogd.plist
+```
+
+**实测案例**：本机「开机亮度自动跳到 0.88」就是靠它定位的——日志显示
+`uptime 54s → 0.75`、`uptime 90s → 0.8799`，进而发现 NVRAM 残留变量
+`nmintelfb-brightness = 88`。详见 [docs/08 §6.5](../../docs/08-已知问题.md)。
+
 ## 一次完整的睡眠排查流程（实测有效）
 
 ```bash
