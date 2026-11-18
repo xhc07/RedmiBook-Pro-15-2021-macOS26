@@ -11,6 +11,7 @@
 | `verify.sh` | 安装后自检：版本、驱动、关键属性、显示、电池、音频、输入 |
 | `set-dvmt.sh` | 读取/修改隐藏的 DVMT Pre-Allocated（默认 128 MB） |
 | `diagnostics/` | **排查工具集**：睡眠采样、panic 摘要、ESP 修复、驱动状态快照、亮度/HID 工具 |
+| `pack-release.sh` | 用 7-Zip 打发布 zip（强制 UTF-8 文件名，避免中文名乱码） |
 | `ai-install.sh` | 一键安装脚本（供 AI 或用户直接执行） |
 
 ## 推荐顺序

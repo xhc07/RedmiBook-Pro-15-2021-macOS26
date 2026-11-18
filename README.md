@@ -118,8 +118,12 @@ Release 附件的 zip 里含**中文文件名**（`docs/` 下的文档）。不�
 
 **推荐**：用 7-Zip、Keka 或直接 `git clone`（最稳）。
 
-`v0.3.0` 起的 zip 已带 UTF-8 文件名标志，主流工具均可正确解压；
-更早的 `v0.1.0/v0.2.0` 建议优先用 `git clone` + `git checkout <tag>`。
+`v0.3.0` 起的 zip **由 7-Zip 打包**（`-tzip -mcu=on`，强制 UTF-8 文件名），
+`unzip` / 7-Zip / Finder / WinRAR 均可正确解压；更早的 `v0.1.0/v0.2.0/v0.2.1`
+建议优先用 `git clone` + `git checkout <tag>`。
+
+**7-Zip 命令行（macOS）**：<https://github.com/ip7z/7zip/releases>（下载 `7zXXXX-mac.tar.xz`，
+解包得到 `7zz`）。本仓库的打包脚本 [Tools/pack-release.sh](Tools/pack-release.sh) 就依赖它。
 
 ### 3.2 一键安装（交给 AI 或直接跑）
 
