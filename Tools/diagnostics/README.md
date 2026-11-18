@@ -115,6 +115,21 @@ sudo ./fnprobe.sh 60     # 抓 60 秒，同时记录 HID 事件与亮度变化
 我们用它确认了「Fn 亮度键不经过 PS2/HID，而是 EC 触发的 ACPI 查询（`_Q15`/`_Q16`）」——
 这直接决定了后来走 `SSDT-BRTN` 而不是改键码表。
 
+### 11. `displayaudio.sh` —— 外接屏音频诊断
+
+**用途**：接上 HDMI / Type-C 外接屏后，一次性抓取音频链路的关键状态，
+用于判断"外接屏为什么没声音"。
+
+```bash
+./displayaudio.sh
+# 输出同时保存到 /tmp/displayaudio-<时间>.txt
+```
+
+采集内容：系统音频设备列表、HDA 控制器/Codec 数量、`hda-gfx` 属性、
+framebuffer 连接器信息、最近 5 分钟 HDA 日志。
+
+判断要点：`IOHDACodecDevice` 是否变 2、`AppleHDAHDMI_DPDriver` 是否出现。
+
 ### 10. `brightlogd` —— 亮度变化记录器（源码 `brightlogd.c`）
 
 **用途**：排查「开机亮度自动跳高/跳变」类问题，记录亮度随时间的变化。
