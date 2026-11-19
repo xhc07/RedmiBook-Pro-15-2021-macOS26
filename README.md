@@ -105,6 +105,18 @@ tail -f /tmp/mifskeysd.log      # 按键时出现 "event N"
 > 亮度键不需要守护进程，因为 macOS 有内核级的显示亮度机制。
 > 详见 [Packages/MIFS/README.md](Packages/MIFS/README.md)。
 
+### 3.5 合盖关屏（可选，推荐）
+
+系统睡眠不可用时（本机必须 `SleepDisabled=1`），合盖不会关屏。安装这个守护进程即可：
+
+```bash
+sudo bash Packages/MIFSLid/install.sh
+```
+
+合盖 → 屏幕熄灭；开盖 → 屏幕亮起。卸载：`sudo bash Packages/MIFSLid/uninstall.sh`。
+
+详见 [Packages/MIFSLid/README.md](Packages/MIFSLid/README.md)。
+
 ### 3.4 安装后必做：清理旧驱动残留
 
 如果你之前装过别的核显驱动（如 nmx/IrisXe），NVRAM 里可能残留亮度变量，会导致**开机亮度自动跳高**：
