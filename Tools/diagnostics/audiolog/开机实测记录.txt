@@ -1,0 +1,8 @@
+21:10:31 codec=0 hdmi=0 engDP=0 devs= aci=
+21:11:23 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
+21:11:39 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
+21:11:45 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
+21:12:04 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
+21:12:10 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
+21:12:19 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
+21:12:27 codec=1 hdmi=0 engDP=0 devs= aci="audio-codec-info" = <00000000> "audio-codec-info" = <00000000> 
