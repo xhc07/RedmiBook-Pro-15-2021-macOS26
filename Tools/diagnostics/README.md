@@ -115,6 +115,24 @@ sudo ./fnprobe.sh 60     # 抓 60 秒，同时记录 HID 事件与亮度变化
 我们用它确认了「Fn 亮度键不经过 PS2/HID，而是 EC 触发的 ACPI 查询（`_Q15`/`_Q16`）」——
 这直接决定了后来走 `SSDT-BRTN` 而不是改键码表。
 
+### 12. `lidwatch.sh` —— 合盖状态采样
+
+**用途**：验证合盖检测（`AppleClamshellState` 是否变化、MIFSLid 是否触发）。
+
+```bash
+./lidwatch.sh 90      # 采样 90 秒
+# 期间合上盖子再打开
+```
+
+输出示例：
+
+```
+21:05:03  clamshell=Yes  lidOpen=?    ← 合盖
+21:05:07  clamshell=No   lidOpen=?    ← 开盖
+```
+
+配合 `tail -f /tmp/mifslidd.log` 可确认守护进程动作。
+
 ### 11. `displayaudio.sh` —— 外接屏音频诊断
 
 **用途**：接上 HDMI / Type-C 外接屏后，一次性抓取音频链路的关键状态，
