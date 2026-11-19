@@ -3,6 +3,24 @@
 > 这些脚本是排查过程中实际用过的工具，整理成可复用的形式。
 > 返回主文档：[README.md](../../README.md) · 安装脚本见 [../README.md](../README.md)
 
+## 工具汇总（2026-11-19）
+
+| 工具 | 用途 | 关键场景 |
+|---|---|---|
+| `sleeptrace.sh` + `analyze-sleeptrace.py` | 睡眠状态采样与分析 | 睡眠调查 |
+| `check-driver-state.sh` | 驱动状态快照 | 版本/加载检查 |
+| `check-esp.sh` | ESP 健康检查/修复 | EFI 分区问题 |
+| `dump-panic.sh` | panic 摘要 | 崩溃分析 |
+| `fnprobe.sh` | Fn 键一键探测 | 热键排查 |
+| `brightctl` / `brightd` | 亮度读写 / 恢复守护 | 亮度调试 |
+| `hidsniff` / `hidsniff2` | HID 事件嗅探 | 热键是否走 HID |
+| `brightlogd` | 亮度变化记录（开机自启） | 开机亮度跳变 |
+| `displayaudio.sh` | 外接屏音频诊断 | HDMI/DP 无声音 |
+| `lidwatch.sh` | 合盖状态采样 | 合盖检测 |
+| `audioprobe/` | GPU 音频寄存器只读探测 kext | 显示音频可行性 |
+| `audiolog/` | 开机音频状态记录（3 分钟） | 开机时机验证 |
+| `dispaudio/` | 显示音频属性注入实验 | 已排除方案 |
+
 ## 用到的核心方法
 
 | 方法 | 做什么 | 为什么有效 |
