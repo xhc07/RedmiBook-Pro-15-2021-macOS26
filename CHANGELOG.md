@@ -1,5 +1,20 @@
 # 版本记录
 
+## v0.3.2 — 2026-11-19
+
+**新增：合盖自动关屏**
+
+- 问题：系统睡眠不可用 → `SleepDisabled=1` → 合盖后屏幕不黑
+- 排查：对比 AMD 版（RedmiBook Pro 14/15S）后确认 **ACPI 层本机已完整**（`_Q80` 里已有 `Notify(LID0,0x80)` + `GLID`），缺的是驱动侧动作
+- 方案：新增 `Packages/MIFSLid` 用户态守护进程，监听 `AppleClamshellState`，合盖 `pmset displaysleepnow`、开盖 `caffeinate -u -t 1`
+- 实测：合盖屏幕熄灭、开盖亮起
+
+**文档**
+
+- `docs/08 §6.7` 标记为已解决
+- `docs/08 §6.5.1` 补充麦克风走 Intel SST/SoundWire 的证据（与 AMD ACP 的差异）
+- 新增 `Packages/MIFSLid/README.md`
+
 ## v0.3.1 — 2026-11-18
 
 **修复：开机后亮度自动跳高**

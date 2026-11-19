@@ -45,7 +45,7 @@
 | Wi-Fi / 蓝牙 | ✅ | `AirportItlwm` 2.4.0 / IntelBluetooth 2.5.x |
 | USB / 外置硬盘 | ✅ | USBToolBox + UTBDefault + XHCI-unsupported |
 | 摄像头 | ✅ | 原生 UVC |
-| 合盖 | ⚠️ | 已设 `disablesleep 1`：合盖不睡，避免误触发 S3 |
+| 合盖 | ✅ | 合盖自动关屏（`Packages/MIFSLid`）；不睡眠，避免误触发 S3 |
 
 ## 3. 快速开始
 
@@ -163,6 +163,7 @@ Drivers/             WhateverXe Graphics 0.4.1 安装包 + Compat 0.8.0 / 0.8.1
 Tools/               安装、自检、一键安装脚本                      → Tools/README.md
 Tools/diagnostics/   排查工具（采样器 / panic / ESP / 背光 / HID）  → Tools/diagnostics/README.md
 Packages/MIFS/       **Fn+F6/F7/F8 热键**组件（SSDT + kext + 守护进程 + 安装） → Packages/MIFS/README.md
+Packages/MIFSLid/    **合盖关屏**守护进程                                    → Packages/MIFSLid/README.md
 docs/                安装、功能、实现、失败尝试、睡眠调查、亮度调优、参考资料、已知问题
 AI-INSTALL.md        给 AI 的一键安装说明（可直接粘贴给助手）      → AI-INSTALL.md
 LICENSES/            第三方许可证说明
@@ -186,12 +187,11 @@ LICENSES/            第三方许可证说明
 - **Fn 亮度键**：偶发无响应（EC 上报时序），可再按一次。
 - **Fn+F6/F7/F8**：需要安装守护进程（见 §3.3）；首次用 F7 需授予屏幕录制权限。
 - **开机亮度跳高**：旧驱动 NVRAM 残留导致，执行 `sudo nvram -d nmintelfb-brightness` 解决（见 §3.4）
-- **合盖不黑屏**：`SleepDisabled=1` 导致系统不走合盖关屏路径，待修（见 [docs/08 §6.7](docs/08-已知问题.md)）
 - **开机偶发 logd 看门狗报告**：非致命，可忽略（见 [docs/08 §6.6](docs/08-已知问题.md)）
 - **外接屏热插拔可能卡死**：拔出外接显示器时偶发 WindowServer 卡死，待排查（见 [docs/08 §6.9](docs/08-已知问题.md)）
 - **外接屏 HDR 会崩溃**：驱动层限制，请保持 SDR（见 [docs/08 §6.10](docs/08-已知问题.md)）
 - **外接屏无声音**：WhateverXe 未实现显示音频（codec 不枚举），驱动限制（见 [docs/08 §6.11](docs/08-已知问题.md)）
-- **合盖不睡眠**：见上，合盖后会保持运行（注意散热）。
+- **合盖不睡眠**：合盖会关屏（MIFSLid），但系统保持运行（散热注意）。
 
 更多见 [docs/08-已知问题.md](docs/08-已知问题.md)。
 
@@ -308,7 +308,8 @@ LICENSES/            第三方许可证说明
 
 | 版本 | 驱动 | 说明 |
 |---|---|---|
-| **v0.3.1**（当前） | WhateverXe **0.8.3** + Compat 0.8.1 | 修复开机亮度跳高（NVRAM 残留）；新增亮度记录器；含 v0.3.0 的 Fn 热键 |
+| **v0.3.2**（当前） | WhateverXe **0.8.3** + Compat 0.8.1 | 新增合盖关屏（MIFSLid）；含 v0.3.1 的亮度跳高修复与 v0.3.0 的 Fn 热键 |
+| v0.3.1 | WhateverXe 0.8.3 + Compat 0.8.1 | 修复开机亮度跳高（NVRAM 残留）；新增亮度记录器 |
 | v0.3.0 | WhateverXe 0.8.3 + Compat 0.8.1 | Fn+F6/F7/F8 热键（MIFS）+ 显示睡眠修复 |
 | v0.2.1 | WhateverXe 0.8.3 + Compat 0.8.1 | 修复显示睡眠唤醒后黑屏（背光不恢复）|
 | v0.2.0 | WhateverXe 0.8.3 + Compat 0.8.1 | 跟随上游 0.8.3（显示睡眠有问题，请勿单独使用） |
