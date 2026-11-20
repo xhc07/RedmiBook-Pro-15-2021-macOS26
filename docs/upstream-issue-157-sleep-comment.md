@@ -69,3 +69,8 @@ With softsleep enabled the sleep transition never completes — `Failure during 
 3. Does the DMC event-handler table need to be reloaded at a different point in the wake sequence than `systemDidWake`?
 
 Thanks again for all the work in this thread — if any of this is useful I can provide fuller logs (`pmset -g log` windows, panic backtraces).
+
+---
+
+**已发布**：https://github.com/b00t0x/WhateverXe/issues/157#issuecomment-7043458583
+（2026-11-20 23:30，使用 classic token，`public_repo` 权限）
