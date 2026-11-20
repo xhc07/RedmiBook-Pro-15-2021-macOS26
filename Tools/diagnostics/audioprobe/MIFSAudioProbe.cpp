@@ -76,6 +76,23 @@ void MIFSAudioProbe::probeGPU(void)
     setProperty("AudioRegs65000", vals, sizeof(vals));
     UInt32 extra[4] = { read32(0x64000), read32(0x64010), read32(0x64020), read32(0x64030) };
     setProperty("AudioRegs64000", extra, sizeof(extra));
+
+    // 上游 #124 需要的关键寄存器（只读）
+    struct { const char *name; UInt32 off; } targets[] = {
+        {"AUD_PIN_ELD_CP_VLD_650C0", 0x650C0},
+        {"AUD_PIN_ELD_CP_VLD_650C4", 0x650C4},
+        {"AUD_FREQ_CNTRL_65900",     0x65900},   // TGL 专属：坏值 0x901 -> 应 0x8010
+        {"AUD_CHICKENBIT_65F10",     0x65F10},   // bit15 codec wake override
+        {"AUD_CHICKENBIT_65F00",     0x65F00},
+        {"AUDIO_PIN_BUF_CTL_48414",  0x48414},   // bit31 display audio enable
+        {"PWR_WELL_CTL1_45400",      0x45400},
+        {"PWR_WELL_CTL2_45404",      0x45404},
+        {"AUDIO_CODEC_ID_65020",     0x65020},   // 0x80862812 expected
+    };
+    for (unsigned i = 0; i < sizeof(targets)/sizeof(targets[0]); i++) {
+        UInt32 v = read32(targets[i].off);
+        setProperty(targets[i].name, v, 32);
+    }
 }
 
 bool MIFSAudioProbe::start(IOService *provider)
