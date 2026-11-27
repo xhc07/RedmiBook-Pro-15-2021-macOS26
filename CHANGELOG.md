@@ -8,7 +8,7 @@
 - 证据：内核日志 `Unsupported DDI` ×20 → `Phase 2 of link training failed` → AGDC 下线显示
 - 修复：采用 **qqaoshi888** 的 `lyndon-0.8.6` 分支提交 **`ec5cd885`**（`-wex-edp-fix-training`）
   - 新文件 `kern_tgl_edp_training.cpp/.hpp`（DDI/PG 电源域修复 + 点亮前训练修补）
-  - 本仓库收录最小补丁：[`patches/wex-0.8.6-edp-fix-training.patch`](patches/wex-0.8.6-edp-fix-training.patch)
+  - 本仓库收录最小补丁：[`Patches/wex-0.8.6-edp-fix-training.patch`](Patches/wex-0.8.6-edp-fix-training.patch)
 - 实测：`Phase 2` 失败 **5 → 0**，内屏 3200×2000@90Hz + 外接 4K@60Hz 同时正常，Metal 2
 - 配方与复现步骤：[`Packages/WEX-0.8.6-edpfix/README.md`](Packages/WEX-0.8.6-edpfix/README.md)
 - EFI / EFI-debug 均已更新到 **0.8.6 + eDP 修复**（日常版静默，调试版带 trace）

@@ -25,7 +25,7 @@ macOS 接管固件显示时内屏会黑（外接屏正常）。本机实测日�
 | 提交 | **`ec5cd885`** — "add -wex-edp-fix-training" |
 | 日期 | 2026-11-26 |
 | 涉及文件 | `kern_tgl_edp_training.cpp`（新，+253）、`kern_tgl_edp_training.hpp`（新，+46）、`kern_xe.cpp`（+14）、`kern_xe.hpp`（+4） |
-| 本地补丁 | [`patches/wex-0.8.6-edp-fix-training.patch`](../../patches/wex-0.8.6-edp-fix-training.patch)（370 行） |
+| 本地补丁 | [`Patches/wex-0.8.6-edp-fix-training.patch`](../../Patches/wex-0.8.6-edp-fix-training.patch)（370 行） |
 
 补丁做的事：
 - `powerDomainRepair()`：修复 DDI / PG 电源域的陈旧状态
@@ -90,7 +90,7 @@ python3 tools/build.py --release
 ```bash
 git clone --depth 1 --branch 0.8.6 https://github.com/b00t0x/WhateverXe.git wex
 cd wex
-git apply /path/to/patches/wex-0.8.6-edp-fix-training.patch
+git apply /path/to/Patches/wex-0.8.6-edp-fix-training.patch
 python3 tools/build.py --release
 ```
 
