@@ -1392,7 +1392,7 @@
 				AAAAAAAAAAAAAAAAAAA=
 				</data>
 				<key>boot-args</key>
-				<string>keepsyms=1 -vi2c-force-polling alcid=38 alcverbs=1 -allow3d -disablegfxfirmware -wex-tgl-edp-keep -wex-edp-fix-training -wex-edp-no-extcap -wex-tgl-edp-softsleep</string>
+				<string>keepsyms=1 alcid=38 alcverbs=1 -allow3d -disablegfxfirmware -wex-edp-fix-training -vi2c-force-polling</string>
 				<key>csr-active-config</key>
 				<data>
 				EwoAAA==
