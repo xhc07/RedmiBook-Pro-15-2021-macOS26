@@ -1,5 +1,19 @@
 # 版本记录
 
+## v0.4.0 — 2026-11-27
+
+**重大升级：WhateverXe 0.8.6 + 内屏 eDP 修复（0.8.4/0.8.5/0.8.6 内屏黑屏问题解决）**
+
+- 问题：升级到 0.8.4/0.8.5/0.8.6 后，macOS 接管固件显示时**内屏黑屏**（外接屏正常）
+- 证据：内核日志 `Unsupported DDI` ×20 → `Phase 2 of link training failed` → AGDC 下线显示
+- 修复：采用 **qqaoshi888** 的 `lyndon-0.8.6` 分支提交 **`ec5cd885`**（`-wex-edp-fix-training`）
+  - 新文件 `kern_tgl_edp_training.cpp/.hpp`（DDI/PG 电源域修复 + 点亮前训练修补）
+  - 本仓库收录最小补丁：[`patches/wex-0.8.6-edp-fix-training.patch`](patches/wex-0.8.6-edp-fix-training.patch)
+- 实测：`Phase 2` 失败 **5 → 0**，内屏 3200×2000@90Hz + 外接 4K@60Hz 同时正常，Metal 2
+- 配方与复现步骤：[`Packages/WEX-0.8.6-edpfix/README.md`](Packages/WEX-0.8.6-edpfix/README.md)
+- EFI / EFI-debug 均已更新到 **0.8.6 + eDP 修复**（日常版静默，调试版带 trace）
+- 已反馈上游：https://github.com/b00t0x/WhateverXe/issues/208#issuecomment-7214567458
+
 ## v0.3.2 — 2026-11-19
 
 **新增：合盖自动关屏**

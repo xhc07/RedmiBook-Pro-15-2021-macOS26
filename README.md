@@ -29,10 +29,10 @@
 
 | 功能 | 状态 | 实现方式 |
 |---|---|---|
-| 开机 / 显示（3200×2000 @90 Hz） | ✅ | WhateverXe 0.8.2 + 补丁 02（keep）+ 补丁 04（retrain） |
+| 开机 / 显示（3200×2000 @90 Hz） | ✅ | **WhateverXe 0.8.6 + `-wex-edp-fix-training`**（qqaoshi888 `ec5cd885`，见 [Packages/WEX-0.8.6-edpfix](Packages/WEX-0.8.6-edpfix/README.md)） |
 | GPU 加速（Metal 2） | ✅ | `AppleIntelTGLGraphics` 16.0.0 + Compat 0.8.1（AuxKC） |
 | 亮度调节（滑块 / HUD） | ✅ | `SSDT-PNLF` + 补丁 03 + **亮度下限 6.25%**（本仓库改动） |
-| 显示器睡眠 / 唤醒 | ✅ | `-wex-tgl-edp-softsleep`，唤醒只做 partial modeset |
+| 显示器睡眠 / 唤醒 | ✅ | 0.8.6 内部处理（eDP 重链超时已修）；旧版用 `-wex-tgl-edp-softsleep` |
 | **系统睡眠（S3）** | ❌ | 唤醒后显示无法恢复 → 看门狗 panic，详见 [docs/05](docs/05-睡眠调查.md) |
 | 电池电量 / 充电状态 | ✅ | `SSDT-ADPX`（发布 `ACPI0003`）+ `SMCBatteryManager` |
 | **Fn+F4 / Fn+F5（亮度）** | ✅ | `SSDT-BRTN` + `BrightnessKeys`，实测每档 ±128 |
@@ -55,7 +55,7 @@
 # 2. 生成你自己的 SMBIOS（MacBookPro16,2），填进 EFI/OC/config.plist
 # 3. 安装 WhateverXe Graphics（会把 Compat 0.8.0 装进 /Library/Extensions）
 sudo ./Tools/reinstall-graphics.sh
-# 4. 让 Compat 与 EFI 里的 WhateverXe 版本配对（0.8.2 ↔ 0.8.1）
+# 4. 让 Compat 与 EFI 里的 WhateverXe 版本配对（0.8.6 ↔ 0.8.1）
 sudo ./Tools/install-compat.sh 0.8.1
 # 5. 重启，然后自检
 ./Tools/verify.sh
@@ -68,7 +68,7 @@ sudo ./Tools/install-compat.sh 0.8.1
 | 版本 | 启动参数差异 | 用途 |
 |---|---|---|
 | **`EFI/`**（日常版） | 无 `-v`、无 `debug=0x100` | 日常使用：启动快、不滚屏 |
-| **`EFI-debug/`**（调试版） | 追加 `-v debug=0x100` | 排查问题：滚动打印内核/kext 日志，panic 信息更全 |
+| **`EFI-debug/`**（调试版） | 追加 `-v debug=0x100 -wex-display-trace -wex-display13-trace` | 排查问题：滚动打印内核/kext 日志，panic 信息更全 |
 
 两者 **kext、ACPI、其余 config 完全一致**，只有启动参数不同；日志内容对报 bug 很有用。
 详见 [EFI/README.md](EFI/README.md)、[EFI-debug/README.md](EFI-debug/README.md)。
