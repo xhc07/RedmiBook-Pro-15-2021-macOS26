@@ -13,6 +13,8 @@
 - 配方与复现步骤：[`Packages/WEX-0.8.6-edpfix/README.md`](Packages/WEX-0.8.6-edpfix/README.md)
 - EFI / EFI-debug 均已更新到 **0.8.6 + eDP 修复**（日常版静默，调试版带 trace）
 - 已反馈上游：https://github.com/b00t0x/WhateverXe/issues/208#issuecomment-7214567458
+- 发布：https://github.com/xhc07/RedmiBook-Pro-15-2021-macOS26/releases/tag/v0.4.0
+  （资产 `RedmiBook-Pro-15-2021-macOS26-v0.4.0.zip`，163.7 MB）
 
 ## v0.3.2 — 2026-11-19
 
