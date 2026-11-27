@@ -55,3 +55,8 @@ So the internal panel is on **DDI A / port 0 with connector type 0x02000000**, a
 3. Would a trace flag that survives this path help you debug it? I can run any build you point me at and report the register/log output.
 
 I can attach the full `log show` window (16:48–16:54) or any specific `ioreg` dump if useful.
+
+---
+
+**已发布**：https://github.com/b00t0x/WhateverXe/issues/208#issuecomment-7214203092
+（2026-11-27 17:0x，经用户确认后发布）
